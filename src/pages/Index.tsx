@@ -1,3 +1,5 @@
+
+
 import { useState, useMemo, useEffect } from "react";
 import { Task, SortField, SortOrder, Taskcategory } from "@/types/task";
 import { TaskItem } from "@/components/TaskItem";
@@ -6,6 +8,14 @@ import { TaskFilters } from "@/components/TaskFilters";
 import { Button } from "@/components/ui/button";
 import { Plus, CheckCircle2, Moon, Sun } from "lucide-react";
 import { toast } from "sonner";
+
+const generateId = () => {
+  
+  if (typeof window !== "undefined" && window.crypto && window.crypto.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+};
 
 const Index = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -48,7 +58,8 @@ const Index = () => {
     } else {
       const newTask: Task = {
         ...taskData,
-        id: crypto.randomUUID(),
+        
+        id: generateId(),
         createdAt: now,
         updatedAt: now,
       };
