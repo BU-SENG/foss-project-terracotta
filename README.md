@@ -33,8 +33,7 @@ it ideal for personal use.
 ### 🔧 Installation
 
 ``` bash
-git clone https://github.com/yourusername/personal-schedule-app.git
-cd personal-schedule-app
+git clone [https://github.com/BU-SENG/foss-project-terracotta]
 ```
 
 ### ▶️ Running the App
