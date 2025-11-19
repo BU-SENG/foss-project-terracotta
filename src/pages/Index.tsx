@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { Task, SortField, SortOrder } from "@/types/task";
+import { Task, SortField, SortOrder, Taskcategory } from "@/types/task";
 import { TaskItem } from "@/components/TaskItem";
 import { TaskDialog } from "@/components/TaskDialog";
 import { TaskFilters } from "@/components/TaskFilters";
@@ -14,6 +14,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>("priority");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+  const [categoryFilter, setCategoryFilter] = useState<Taskcategory | "all">("all");
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem("theme");
     if (saved) return saved === "dark";
@@ -93,6 +94,11 @@ const Index = () => {
       );
     }
 
+    // Category filter
+    if (categoryFilter && categoryFilter !== "all") {
+      filtered = filtered.filter(task => task.category === categoryFilter);
+    }
+
     // Sort
     const sorted = [...filtered].sort((a, b) => {
       let comparison = 0;
@@ -100,6 +106,9 @@ const Index = () => {
       switch (sortField) {
         case "title":
           comparison = a.title.localeCompare(b.title);
+          break;
+        case "category":
+          comparison = a.category.localeCompare(b.category);
           break;
         case "priority":
           const priorityOrder = { high: 3, medium: 2, low: 1 };
@@ -116,7 +125,7 @@ const Index = () => {
     });
 
     return sorted;
-  }, [tasks, searchQuery, sortField, sortOrder]);
+  }, [tasks, searchQuery, sortField, sortOrder, categoryFilter]);
 
   const stats = useMemo(() => {
     const completed = tasks.filter(t => t.status === "completed").length;
@@ -180,6 +189,8 @@ const Index = () => {
               setSortField(field);
               setSortOrder(order);
             }}
+            categoryFilter={categoryFilter}
+            onCategoryChange={setCategoryFilter}
           />
         </div>
 
