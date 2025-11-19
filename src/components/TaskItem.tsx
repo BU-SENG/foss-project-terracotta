@@ -19,6 +19,14 @@ const priorityConfig = {
   high: { label: "High", className: "bg-priority-high text-white" },
 };
 
+const categoryConfig = {
+  work: { label: "Work", className: "bg-indigo-600 text-white" },
+  personal: { label: "Personal", className: "bg-pink-500 text-white" },
+  school: { label: "School", className: "bg-emerald-600 text-white" },
+  errands: { label: "Errands", className: "bg-yellow-400 text-black" },
+  other: { label: "Other", className: "bg-gray-500 text-white" },
+};
+
 const statusConfig = {
   pending: { icon: Circle, label: "Pending", color: "text-muted-foreground" },
   ongoing: { icon: Clock, label: "Ongoing", color: "text-primary" },
@@ -77,6 +85,9 @@ export const TaskItem = ({ task, onEdit, onDelete, onStatusChange }: TaskItemPro
           )}
           
           <div className="flex flex-wrap items-center gap-2">
+            <Badge className={categoryConfig[task.category].className}>
+              {categoryConfig[task.category].label}
+            </Badge>
             <Badge className={priorityConfig[task.priority].className}>
               {priorityConfig[task.priority].label}
             </Badge>
