@@ -49,14 +49,6 @@ git clone https://github.com/BU-SENG/foss-project-terracotta.git
 # 1. Install dependencies
     npm install
 
-
-Go into the project folder
-cd foss-project-terracotta   (if you haven't already)
-
-# 1. Install dependencies
-    npm install
-
-
 # 2. Start the development server
     npm run dev
 
