@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Task, SortField, SortOrder } from "@/types/task";
 import { TaskItem } from "@/components/TaskItem";
 import { TaskDialog } from "@/components/TaskDialog";
 import { TaskFilters } from "@/components/TaskFilters";
 import { Button } from "@/components/ui/button";
-import { Plus, CheckCircle2 } from "lucide-react";
+import { Plus, CheckCircle2, Moon, Sun } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -14,6 +14,25 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>("priority");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved) return saved === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   const handleSaveTask = (taskData: Omit<Task, "id" | "createdAt" | "updatedAt"> & { id?: string }) => {
     const now = new Date();
@@ -107,41 +126,51 @@ const Index = () => {
   }, [tasks]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-5xl mx-auto px-4 py-8">
-        <header className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-3xl font-bold text-foreground">Task Manager</h1>
-            <Button onClick={handleNewTask} className="gap-2">
-              <Plus className="h-4 w-4" />
-              New Task
-            </Button>
+    <div className="app-container">
+      <div className="app-wrapper">
+        <header className="app-header">
+          <div className="header-content">
+            <div className="header-text">
+              <h1 className="app-title">Task Manager</h1>
+              <p className="app-subtitle">Organize and track your tasks efficiently</p>
+            </div>
+            <div className="header-actions">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleTheme}
+                className="theme-toggle"
+              >
+                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
+              <Button onClick={handleNewTask} className="new-task-btn">
+                <Plus className="h-4 w-4" />
+                New Task
+              </Button>
+            </div>
           </div>
-          <p className="text-muted-foreground">
-            Organize and track your tasks efficiently
-          </p>
         </header>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="bg-card p-4 rounded-lg border">
-            <p className="text-sm text-muted-foreground mb-1">Total</p>
-            <p className="text-2xl font-bold text-card-foreground">{stats.total}</p>
+        <div className="stats-grid">
+          <div className="stat-card">
+            <p className="stat-label">Total Tasks</p>
+            <p className="stat-value">{stats.total}</p>
           </div>
-          <div className="bg-card p-4 rounded-lg border">
-            <p className="text-sm text-muted-foreground mb-1">Pending</p>
-            <p className="text-2xl font-bold text-card-foreground">{stats.pending}</p>
+          <div className="stat-card">
+            <p className="stat-label">Pending</p>
+            <p className="stat-value">{stats.pending}</p>
           </div>
-          <div className="bg-card p-4 rounded-lg border">
-            <p className="text-sm text-muted-foreground mb-1">Ongoing</p>
-            <p className="text-2xl font-bold text-primary">{stats.ongoing}</p>
+          <div className="stat-card stat-card-primary">
+            <p className="stat-label stat-label-primary">In Progress</p>
+            <p className="stat-value stat-value-primary">{stats.ongoing}</p>
           </div>
-          <div className="bg-card p-4 rounded-lg border">
-            <p className="text-sm text-muted-foreground mb-1">Completed</p>
-            <p className="text-2xl font-bold text-accent">{stats.completed}</p>
+          <div className="stat-card stat-card-accent">
+            <p className="stat-label stat-label-accent">Completed</p>
+            <p className="stat-value stat-value-accent">{stats.completed}</p>
           </div>
         </div>
 
-        <div className="mb-6">
+        <div className="filters-container">
           <TaskFilters
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -154,18 +183,25 @@ const Index = () => {
           />
         </div>
 
-        <div className="space-y-3">
+        <div className="tasks-list">
           {filteredAndSortedTasks.length === 0 ? (
-            <div className="text-center py-12">
-              <CheckCircle2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">
+            <div className="empty-state">
+              <div className="empty-icon">
+                <CheckCircle2 className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="empty-title">
                 {searchQuery ? "No tasks found" : "No tasks yet"}
               </h3>
-              <p className="text-muted-foreground mb-4">
-                {searchQuery ? "Try adjusting your search" : "Create your first task to get started"}
+              <p className="empty-description">
+                {searchQuery 
+                  ? "Try adjusting your search criteria to find what you're looking for" 
+                  : "Get started by creating your first task and stay organized"}
               </p>
               {!searchQuery && (
-                <Button onClick={handleNewTask}>Create Task</Button>
+                <Button onClick={handleNewTask} className="empty-action-btn">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Your First Task
+                </Button>
               )}
             </div>
           ) : (
