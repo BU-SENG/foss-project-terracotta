@@ -55,7 +55,7 @@ git clone https://github.com/BU-SENG/foss-project-terracotta.git
     npm run dev
 
 ### App will be running at http://localhost:8080
-### Hosted online at foss-project-terracotta.vercel.app
+### Hosted online at https://foss-project-terracotta.vercel.app
 
 
 
