@@ -13,6 +13,7 @@ a backend.
 This project focuses on **simplicity, speed, and local storage**, making
 it ideal for personal use.
 
+
 ## Features
 
 - Users can create tasks
@@ -30,6 +31,7 @@ it ideal for personal use.
 -   **HTML**\
 -   **TailwindCSS**\
 -   **React**\
+-   **Vercel**
 
 ## Getting Started
 
@@ -41,18 +43,20 @@ git clone https://github.com/BU-SENG/foss-project-terracotta.git
 
 ```
 
-### Running the App
+# Running the App
 
-# Go into the project folder
+## Go into the project folder
    cd foss-project-terracotta   (if you haven't already)
 
-# 1. Install dependencies
+## 1. Install dependencies
     npm install
 
-# 2. Start the development server
+## 2. Start the development server
     npm run dev
 
-# App will be running at http://localhost:8080
+### App will be running at http://localhost:8080
+### Hosted online at foss-project-terracotta.vercel.app
+
 
 
 
@@ -70,6 +74,3 @@ git clone https://github.com/BU-SENG/foss-project-terracotta.git
 -   Calendar sharing
 -   Cross-device syncing
 
-## License
-
-MIT License
