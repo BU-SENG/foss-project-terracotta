@@ -24,13 +24,13 @@ it ideal for personal use.
 - The system allows users to assign a task a timeframe.
 - users can set priorities for different tasks
 - users can search for tasks by name
-- users will be able to sort tasks based on priority (ascending and descending order), due date,     and name alphabetically
+- users will be able to sort tasks based on priority (ascending and descending order), due date, and name alphabetically
 
 ## Technologies Used
 
--   **HTML**\
--   **TailwindCSS**\
--   **React**\
+-   **HTML**
+-   **TailwindCSS**
+-   **React**
 -   **Vercel**
 
 ## Getting Started
@@ -60,10 +60,10 @@ git clone https://github.com/BU-SENG/foss-project-terracotta.git
 
 
 
-1.  Open the web app in your browser\
-2.  Add a new task using the input form\
-3.  Select the date/time\
-4.  Manage tasks from the schedule view (edit or delete)\
+1.  Open the web app in your browser
+2.  Add a new task using the input form
+3.  Select the date/time
+4.  Manage tasks from the schedule view (edit or delete)
 
 
 ## Future Improvements
