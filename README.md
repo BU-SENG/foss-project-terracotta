@@ -25,6 +25,8 @@ it ideal for personal use.
 - users can set priorities for different tasks
 - users can search for tasks by name
 - users will be able to sort tasks based on priority (ascending and descending order), due date, and name alphabetically
+- Users can sign up, authenticate and login with their tasks saved.
+- 
 
 ## Technologies Used
 
@@ -32,6 +34,7 @@ it ideal for personal use.
 -   **TailwindCSS**
 -   **React**
 -   **Vercel**
+-   **Supabase**
 
 ## Getting Started
 
@@ -55,7 +58,7 @@ git clone https://github.com/BU-SENG/foss-project-terracotta.git
     npm run dev
 
 ### App will be running at http://localhost:8080
-### Hosted online at https://foss-project-terracotta.vercel.app
+### Hosted online at https://taskmanager-project-terracotta.vercel.app
 
 
 
@@ -69,8 +72,7 @@ git clone https://github.com/BU-SENG/foss-project-terracotta.git
 ## Future Improvements
 
 -   Cloud sync + backend API
--   User authentication
--   Theme customization (dark mode)
+-   Deadline notifications
 -   Calendar sharing
--   Cross-device syncing
+-   Cross-device syncing with qr code
 
