@@ -1,4 +1,4 @@
-import { SortField, SortOrder } from "@/types/task";
+import { SortField, SortOrder, Taskcategory } from "@/types/task";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ interface TaskFiltersProps {
   sortField: SortField;
   sortOrder: SortOrder;
   onSortChange: (field: SortField, order: SortOrder) => void;
+  categoryFilter: Taskcategory | "all";
+  onCategoryChange: (category: Taskcategory | "all") => void;
 }
 
 export const TaskFilters = ({
@@ -18,6 +20,8 @@ export const TaskFilters = ({
   sortField,
   sortOrder,
   onSortChange,
+  categoryFilter,
+  onCategoryChange,
 }: TaskFiltersProps) => {
   const toggleSortOrder = () => {
     onSortChange(sortField, sortOrder === "asc" ? "desc" : "asc");
@@ -37,6 +41,22 @@ export const TaskFilters = ({
       
       <div className="flex gap-2">
         <Select
+          value={categoryFilter}
+          onValueChange={(value) => onCategoryChange(value as Taskcategory | "all")}
+        >
+          <SelectTrigger className="w-[140px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="work">Work</SelectItem>
+            <SelectItem value="personal">Personal</SelectItem>
+            <SelectItem value="school">School</SelectItem>
+            <SelectItem value="errands">Errands</SelectItem>
+            <SelectItem value="other">Other</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
           value={sortField}
           onValueChange={(value) => onSortChange(value as SortField, sortOrder)}
         >
@@ -45,6 +65,7 @@ export const TaskFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="title">Name</SelectItem>
+            <SelectItem value="category">Category</SelectItem>
             <SelectItem value="priority">Priority</SelectItem>
             <SelectItem value="dueDate">Due Date</SelectItem>
           </SelectContent>

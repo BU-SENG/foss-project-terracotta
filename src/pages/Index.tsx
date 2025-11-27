@@ -1,47 +1,72 @@
-
-
 import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Task, SortField, SortOrder } from "@/types/task";
 import { TaskItem } from "@/components/TaskItem";
 import { TaskDialog } from "@/components/TaskDialog";
 import { TaskFilters } from "@/components/TaskFilters";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Plus, CheckCircle2, Moon, Sun } from "lucide-react";
+import { Plus, CheckCircle2, LogOut } from "lucide-react";
 import { toast } from "sonner";
-
-const generateId = () => {
-  
-  if (typeof window !== "undefined" && window.crypto && window.crypto.randomUUID) {
-    return window.crypto.randomUUID();
-  }
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
+import { supabase } from "@/integrations/supabase/client";
+import { Session } from "@supabase/supabase-js";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [session, setSession] = useState<Session | null>(null);
+  const [username, setUsername] = useState<string>("");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<SortField>("priority");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [isDarkMode]);
+    // Check authentication
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        if (!session) {
+          navigate("/auth");
+        }
+      }
+    );
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) {
+        navigate("/auth");
+      }
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!session?.user) return;
+
+    // Fetch user profile
+    const fetchProfile = async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", session.user.id)
+        .single();
+
+      if (data && !error) {
+        setUsername(data.username || "");
+      }
+    };
+
+    fetchProfile();
+  }, [session]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
   };
 
   const handleSaveTask = (taskData: Omit<Task, "id" | "createdAt" | "updatedAt"> & { id?: string }) => {
@@ -57,8 +82,7 @@ const Index = () => {
     } else {
       const newTask: Task = {
         ...taskData,
-        
-        id: generateId(),
+        id: crypto.randomUUID(),
         createdAt: now,
         updatedAt: now,
       };
@@ -136,52 +160,60 @@ const Index = () => {
     return { completed, ongoing, pending, total: tasks.length };
   }, [tasks]);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="app-container">
-      <div className="app-wrapper">
-        <header className="app-header">
-          <div className="header-content">
-            <div className="header-text">
-              <h1 className="app-title">Task Manager</h1>
-              <p className="app-subtitle">Organize and track your tasks efficiently</p>
+    <div className="min-h-screen bg-background">
+      <div className="container max-w-5xl mx-auto px-4 py-8">
+        <header className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">
+                {username ? `${username}'s Tasks` : "Task Manager"}
+              </h1>
             </div>
-            <div className="header-actions">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={toggleTheme}
-                className="theme-toggle"
-              >
-                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Button onClick={handleLogout} variant="outline" size="icon">
+                <LogOut className="h-4 w-4" />
               </Button>
-              <Button onClick={handleNewTask} className="new-task-btn">
+              <Button onClick={handleNewTask} className="gap-2">
                 <Plus className="h-4 w-4" />
                 New Task
               </Button>
             </div>
           </div>
+          <p className="text-muted-foreground">
+            Organize and track your tasks efficiently
+          </p>
         </header>
 
-        <div className="stats-grid">
-          <div className="stat-card">
-            <p className="stat-label">Total Tasks</p>
-            <p className="stat-value">{stats.total}</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div className="bg-card p-4 rounded-lg border">
+            <p className="text-sm text-muted-foreground mb-1">Total</p>
+            <p className="text-2xl font-bold text-card-foreground">{stats.total}</p>
           </div>
-          <div className="stat-card">
-            <p className="stat-label">Pending</p>
-            <p className="stat-value">{stats.pending}</p>
+          <div className="bg-card p-4 rounded-lg border">
+            <p className="text-sm text-muted-foreground mb-1">Pending</p>
+            <p className="text-2xl font-bold text-card-foreground">{stats.pending}</p>
           </div>
-          <div className="stat-card stat-card-primary">
-            <p className="stat-label stat-label-primary">In Progress</p>
-            <p className="stat-value stat-value-primary">{stats.ongoing}</p>
+          <div className="bg-card p-4 rounded-lg border">
+            <p className="text-sm text-muted-foreground mb-1">Ongoing</p>
+            <p className="text-2xl font-bold text-primary">{stats.ongoing}</p>
           </div>
-          <div className="stat-card stat-card-accent">
-            <p className="stat-label stat-label-accent">Completed</p>
-            <p className="stat-value stat-value-accent">{stats.completed}</p>
+          <div className="bg-card p-4 rounded-lg border">
+            <p className="text-sm text-muted-foreground mb-1">Completed</p>
+            <p className="text-2xl font-bold text-accent">{stats.completed}</p>
           </div>
         </div>
 
-        <div className="filters-container">
+        <div className="mb-6">
           <TaskFilters
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -194,25 +226,18 @@ const Index = () => {
           />
         </div>
 
-        <div className="tasks-list">
+        <div className="space-y-3">
           {filteredAndSortedTasks.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">
-                <CheckCircle2 className="h-10 w-10 text-muted-foreground" />
-              </div>
-              <h3 className="empty-title">
+            <div className="text-center py-12">
+              <CheckCircle2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 {searchQuery ? "No tasks found" : "No tasks yet"}
               </h3>
-              <p className="empty-description">
-                {searchQuery 
-                  ? "Try adjusting your search criteria to find what you're looking for" 
-                  : "Get started by creating your first task and stay organized"}
+              <p className="text-muted-foreground mb-4">
+                {searchQuery ? "Try adjusting your search" : "Create your first task to get started"}
               </p>
               {!searchQuery && (
-                <Button onClick={handleNewTask} className="empty-action-btn">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Task
-                </Button>
+                <Button onClick={handleNewTask}>Create Task</Button>
               )}
             </div>
           ) : (

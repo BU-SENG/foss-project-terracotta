@@ -13,34 +13,46 @@ it ideal for personal use.
 
 ## ✨ Features
 
--   ➕ Add, edit, and delete tasks\
--   📅 Daily, weekly, and monthly schedule views\
--   💾 Local storage (data saved in the browser)\
--   🔔 Optional task reminders (browser-based)\
--   🎨 Clean, user-friendly interface\
--   📌 No backend required
+- Users can create tasks
+- Users can make and edit task descriptions
+- The system allows the user to update the status of a task to ongoing.
+- The system allows a user to update the status of a task to completed.
+- The system allows the user to delete a task.
+- The system allows users to assign a task a timeframe.
+- users can set priorities for different tasks
+- users can search for tasks by name
+- users will be able to sort tasks based on priority (ascending and descending order), due date,     and name alphabetically
 
 ## 🛠️ Technologies Used
 
 -   **HTML**\
--   **CSS**\
--   **JavaScript**\
--   **LocalStorage / IndexedDB**\
--   (Optional) CSS Framework like **Bootstrap** or **Tailwind**
+-   **TailwindCSS**\
+-   **React**\
 
 ## 🚀 Getting Started
 
 ### 🔧 Installation
 
 ``` bash
-git clone [https://github.com/BU-SENG/foss-project-terracotta]
+ Clone the repository
+git clone https://github.com/BU-SENG/foss-project-terracotta.git
+
 ```
 
 ### ▶️ Running the App
 
-Simply open the **index.html** file in your browser:
+Go into the project folder
+cd foss-project-terracotta   (if you haven't already)
 
-    Open → index.html
+# 1. Install dependencies
+    npm install
+
+
+# 2. Start the development server
+    npm run dev
+
+# App will be running at http://localhost:8080
+
 
 ## 📚 Usage
 
@@ -48,16 +60,7 @@ Simply open the **index.html** file in your browser:
 2.  Add a new task using the input form\
 3.  Select the date/time\
 4.  Manage tasks from the schedule view (edit or delete)\
-5.  Data automatically saves to local storage
 
-## 📂 Project Structure
-
-    personal-schedule-app/
-     ┣ css/
-     ┣ js/
-     ┣ assets/
-     ┣ index.html
-     ┣ README.md
 
 ## 💡 Future Improvements
 

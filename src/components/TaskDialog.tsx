@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Task, TaskPriority, TaskStatus } from "@/types/task";
+import { Task, TaskPriority, TaskStatus, Taskcategory } from "@/types/task";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,7 @@ export const TaskDialog = ({ open, onOpenChange, task, onSave }: TaskDialogProps
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [status, setStatus] = useState<TaskStatus>("pending");
+  const [category, setCategory] = useState<Taskcategory>("other");
   const [dueDate, setDueDate] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -32,12 +33,14 @@ export const TaskDialog = ({ open, onOpenChange, task, onSave }: TaskDialogProps
       setDescription(task.description);
       setPriority(task.priority);
       setStatus(task.status);
+      setCategory(task.category);
       setDueDate(task.dueDate);
     } else {
       setTitle("");
       setDescription("");
       setPriority("medium");
       setStatus("pending");
+      setCategory("other");
       setDueDate(null);
     }
   }, [task, open]);
@@ -50,6 +53,7 @@ export const TaskDialog = ({ open, onOpenChange, task, onSave }: TaskDialogProps
       title: title.trim(),
       description: description.trim(),
       priority,
+      category,
       status,
       dueDate,
     });
@@ -86,7 +90,7 @@ export const TaskDialog = ({ open, onOpenChange, task, onSave }: TaskDialogProps
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Priority</Label>
               <Select value={priority} onValueChange={(value) => setPriority(value as TaskPriority)}>
@@ -111,6 +115,22 @@ export const TaskDialog = ({ open, onOpenChange, task, onSave }: TaskDialogProps
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="ongoing">Ongoing</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <Select value={category} onValueChange={(value) => setCategory(value as Taskcategory)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="work">Work</SelectItem>
+                  <SelectItem value="personal">Personal</SelectItem>
+                  <SelectItem value="school">School</SelectItem>
+                  <SelectItem value="errands">Errands</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
